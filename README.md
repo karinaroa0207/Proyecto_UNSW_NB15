@@ -5,7 +5,7 @@ Repositorio oficial para la prueba de concepto del proyecto de investigación en
 
 ---
 
-## 👥 Integrantes del Grupo
+##  Integrantes del Grupo
 * **Juan David Campos Salcedo** (Código: 20231020007)[cite: 4]
 * **Cristian David Parroquiano Jiménez** (Código: 20222020192)[cite: 4]
 * **Ana Karina Roa Mora** (Código: 20232020118)[cite: 4]
@@ -14,14 +14,14 @@ Repositorio oficial para la prueba de concepto del proyecto de investigación en
 
 ---
 
-## 🎯 Descripción del Proyecto
+## Descripción del Proyecto
 Los sistemas modernos de detección de intrusiones (IDS) enfrentan un desafío crítico: el procesamiento de flujos de red de alta dimensionalidad (más de 40 atributos técnicos), lo que genera redundancia de datos, sobrecarga computacional y un aumento en la **Tasa de Falsas Alarmas (FAR)**. 
 
 Este proyecto evalúa empíricamente la efectividad de **PCA** como técnica de preprocesamiento para comprimir el espacio de características del conjunto de datos **UNSW-NB15** ($257.673$ registros), buscando retener al menos el **$90\%$ de la varianza estadística** sin degradar significativamente la capacidad de detección de ataques[cite: 9].
 
 ---
 
-## ⚙️ Estructura del Repositorio
+##  Estructura del Repositorio
 ```text
 ├── venv/                           # Entorno virtual de Python (excluido en gitignore)
 ├── UNSW_NB15_training-set.csv      # Conjunto de datos de entrenamiento
@@ -37,7 +37,7 @@ Este proyecto evalúa empíricamente la efectividad de **PCA** como técnica de 
 
 ---
 
-## 🚀 Instrucciones de Reproducibilidad
+##  Instrucciones de Reproducibilidad
 
 Para reproducir los experimentos y generar las métricas y gráficas de la prueba de concepto, sigue estos pasos en tu terminal:
 
@@ -76,7 +76,7 @@ python prueba_concepto.py
 
 ---
 
-## 📊 Resultados Principales Obtenidos en la Prueba de Concepto
+## Resultados Principales Obtenidos en la Prueba de Concepto
 
 * **Reducción de Dimensionalidad:** Se comprimió el espacio de **42 a 17 componentes ($k = 17$)**, reteniendo con exactitud el **$90.12\%$ de la varianza total** del tráfico de red.
 
@@ -85,7 +85,3 @@ python prueba_concepto.py
 
 
 * **Detección por Categorías:** Ataques complejos como *Generic* ($99.90\%$ de acierto), *Worms* ($98.31\%$) y *DoS* ($98.02\%$) demostraron una alta efectividad en el subespacio reducido.
-
-```
-
-```
