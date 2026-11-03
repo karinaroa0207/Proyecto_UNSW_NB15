@@ -1,7 +1,6 @@
 ```markdown
 # Detección Eficiente de Intrusiones en Redes Informáticas Mediante Reducción de Dimensionalidad (PCA) en el Dataset UNSW-NB15
 
-Repositorio oficial para la prueba de concepto del proyecto de investigación enfocado en la optimización de Sistemas de Detección de Intrusiones (IDS) mediante la reducción de variables con Análisis de Componentes Principales (PCA)[cite: 3, 4].
 
 ---
 
