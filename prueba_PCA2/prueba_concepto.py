@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, precision_score, confusion_matrix
 
-# 1. CARGA DE DATOS (UNSW-NB15)
+# CARGA DE DATOS
 archivos_csv = glob.glob("*UNSW_NB15*.csv")
 if not archivos_csv:
     raise FileNotFoundError("Coloca los archivos CSV de UNSW-NB15 en la misma carpeta.")
@@ -40,12 +40,12 @@ X_train_raw, X_test_raw, y_train, y_test, cat_train, cat_test = train_test_split
     X_df.values, y, categorias_ataque, test_size=0.30, random_state=42, stratify=y
 )
 
-# 2. PREPROCESAMIENTO: ESTANDARIZACIÓN Z-SCORE (Media = 0, Desviación = 1)
+#  PREPROCESAMIENTO: ESTANDARIZACIÓN Z-SCORE (Media = 0, Desviación = 1)
 scaler = StandardScaler()
 Z_train = scaler.fit_transform(X_train_raw)
 Z_test = scaler.transform(X_test_raw)
 
-# 3. APLICACIÓN DE PCA Y SELECCIÓN DE k PARA >90% DE VARIANZA
+# APLICACIÓN DE PCA Y SELECCIÓN DE k PARA >90% DE VARIANZA
 pca_full = PCA()
 pca_full.fit(Z_train)
 varianza_ind = pca_full.explained_variance_ratio_ * 100
@@ -68,7 +68,7 @@ error_reconstruccion = (np.linalg.norm(Z_test - Z_test_reconstruido, 'fro') /
                         np.linalg.norm(Z_test, 'fro')) * 100
 print(f"Error relativo de reconstrucción (Frobenius): {error_reconstruccion:.2f}%")
 
-# 4. EVALUACIÓN DEL CLASIFICADOR IDS: LÍNEA BASE (SIN PCA) VS CON PCA
+# EVALUACIÓN DEL CLASIFICADOR IDS: LÍNEA BASE (SIN PCA) VS CON PCA
 def evaluar_modelo(X_tr, X_te, y_tr, y_te, nombre):
     clf = DecisionTreeClassifier(max_depth=15, random_state=42)
     t0 = time.perf_counter()
@@ -105,7 +105,6 @@ if cat_test is not None:
     for cat, tasa in resumen_cat.items():
         print(f"  {cat}: {tasa:.2f}% de acierto")
 
-# 5. GENERACIÓN DE GRÁFICAS PARA LAS DIAPOSITIVAS
 plt.rcParams.update({'font.size': 11})
 
 # Gráfica 1: Varianza Explicada Acumulada
@@ -146,4 +145,35 @@ plt.tight_layout()
 plt.savefig('fig2_proyeccion_2d.png', dpi=300)
 plt.close()
 
-print("\n¡Proceso completado! Se guardaron fig1_varianza_pca.png y fig2_proyeccion_2d.png en tu carpeta.")
+# Gráfica 3: Pesos de las variables originales en PC1 y PC2 (Interpretación en el dominio)
+pesos_pc1 = pd.Series(pca_k.components_[0], index=nombres_variables)
+pesos_pc2 = pd.Series(pca_k.components_[1], index=nombres_variables)
+top_vars = pd.concat([pesos_pc1.abs().nlargest(5), pesos_pc2.abs().nlargest(5)]).index.unique()
+
+df_pesos = pd.DataFrame({'PC1 (24.3% var)': pesos_pc1[top_vars], 'PC2 (9.5% var)': pesos_pc2[top_vars]})
+ax = df_pesos.plot(kind='barh', figsize=(8, 5), color=['#1B365D', '#4A90E2'], width=0.75)
+plt.title('Contribución de Variables de Red en las Primeras Componentes (PC1 y PC2)')
+plt.xlabel('Peso en el Autovector (Carga Factorial) [adimensional]')
+plt.ylabel('Atributo del Flujo de Red (UNSW-NB15)')
+plt.axvline(0, color='black', linewidth=0.8)
+plt.grid(alpha=0.3)
+plt.tight_layout()
+plt.savefig('fig3_pesos_componentes.png', dpi=300)
+plt.close()
+
+# Gráfica 4: Tasa de detección por categoría (Casos de éxito vs. fallo)
+plt.figure(figsize=(8, 5))
+colores = ['#2ECC71' if v >= 90 else '#F39C12' if v >= 80 else '#E74C3C' for v in resumen_cat.values]
+resumen_cat.sort_values().plot(kind='barh', color=colores, alpha=0.85)
+plt.title('Tasa de Acierto por Categoría de Tráfico con PCA (k = 17)')
+plt.xlabel('Exactitud de Detección [%]')
+plt.ylabel('Categoría de Tráfico / Ataque')
+plt.axvline(90, color='#1B365D', linestyle='--', linewidth=1.2, label='Referencia 90%')
+plt.xlim(0, 105)
+plt.legend(loc='lower right')
+plt.grid(alpha=0.3, axis='x')
+plt.tight_layout()
+plt.savefig('fig4_acierto_categorias.png', dpi=300)
+plt.close()
+
+print("\n¡Proceso completado! Se guardaron fig1_varianza_pca.png y fig2_proyeccion_2d.png en tu carpeta actual.")
